@@ -25,9 +25,9 @@ $(document).ready(function(){
 			 type:       "POST",
 			 url:        "ajax_processing.php?action=submitIssueLog",
 			 cache:      false,
-			 data:       { issueLogID: $("#editIssueLogID").val(), organizationID: $("#editOrganizationID").val(), issueDate: $("#issueDate").val(), noteText: $("#noteText").val() },
+			 data:       { issueLogID: $("#editIssueLogID").val(), organizationID: $("#editOrganizationID").val(), issueLogTypeID: $("#issueLogTypeID").val(), issueStartDate: $("#issueStartDate").val(), issueEndDate: $("#issueEndDate").val(), noteText: $("#noteText").val() },
 			 success:    function(html) {
-				if (html){
+				if (html.length > 1){
 					$("#span_errors").html(html);
 					$("#submitIssueLogForm").removeAttr("disabled");
 				}else{

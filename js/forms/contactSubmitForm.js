@@ -87,7 +87,7 @@ function submitContact(){
 			 cache:      false,
 			 data:       { contactID: $("#editContactID").val(), organizationID: $("#editOrganizationID").val(), name: $("#contactName").val(), title: $("#contactTitle").val(), addressText: $("#addressText").val(), phoneNumber: $("#phoneNumber").val(), altPhoneNumber: $("#altPhoneNumber").val(), faxNumber: $("#faxNumber").val(), emailAddress: $("#emailAddress").val(), archiveInd: getCheckboxValue('invalidInd'), noteText: $("#noteText").val(),  contactRoles: contactRolesList },
 			 success:    function(html) {
-				if (html){
+				if (html.length > 1){
 					$("#span_errors").html(html);
 					$("#submitContactForm").removeAttr("disabled");
 				}else{
@@ -116,16 +116,16 @@ function submitContact(){
 	
  	if (contactRolesList == ''){
  	    $("#span_error_contactRole").html('Please choose at least one role.');
- 	    myReturn="1";
+ 	    myReturn=1;
  	} else {
  	    $("#span_error_contactRole").html('');
 	}
 
 	if ($("#contactType").val() == "named"){
- 		if (!validateRequired('contactName','<br />Name must be entered to continue.')) myReturn="1";	
+ 		if (!validateRequired('contactName','<br />Name must be entered to continue.')) myReturn=1;	
  	}
  
- 	if (myReturn == "1"){
+ 	if (myReturn == 1){
 		return false; 	
  	}else{
  		return true;

@@ -192,7 +192,7 @@ class Organization extends DatabaseObject {
 	//returns array of contact objects
 	public function getUnarchivedContacts(){
 
-		$query = "SELECT * FROM Contact WHERE (archiveDate = '0000-00-00' || archiveDate = '') AND organizationID = '" . $this->organizationID . "' order by name";
+		$query = "SELECT * FROM Contact WHERE (archiveDate = '0000-00-00' || archiveDate = '' || archiveDate is null) AND organizationID = '" . $this->organizationID . "' order by name";
 
 		$result = $this->db->processQuery($query, 'assoc');
 
@@ -267,7 +267,9 @@ class Organization extends DatabaseObject {
 	//returns array of issue log objects
 	public function getIssueLog(){
 
-		$query = "SELECT * FROM IssueLog WHERE organizationID = '" . $this->organizationID . "' order by issueDate desc";
+		$query = "SELECT * FROM IssueLog
+              LEFT JOIN IssueLogType ON IssueLogType.issueLogTypeID = IssueLog.issueLogTypeID
+              WHERE organizationID = '" . $this->organizationID . "' order by issueStartDate desc";
 
 		$result = $this->db->processQuery($query, 'assoc');
 
@@ -330,6 +332,76 @@ class Organization extends DatabaseObject {
 
 		return $licenseArray;
 
+	}
+
+
+	//returns array of resources
+	public function getResources($organizationRoleID = null){
+		$resourceArray = array();
+
+		//make sure we have the resourcesModule
+		$config = new Configuration;
+		if ($config->settings->resourcesModule != 'Y') {
+			return $resourceArray;
+		}
+
+		if (isset($organizationRoleID)) {
+			$whereOptions = " AND organizationRoleID = '$organizationRoleID' ";
+		} else {
+			$whereOptions = '';
+		}
+		$dbName = $config->settings->resourcesDatabaseName;
+		if ($dbName == '') {
+			return $resourceArray;
+		}
+		$query = "SELECT R.resourceID, R.titleText, R.statusID, CASE
+									WHEN UPPER(S.shortName) LIKE '%ARCHIVE%' THEN 1 ELSE 0 END as archived
+								FROM " . $dbName . ".ResourceOrganizationLink ROL
+								NATURAL JOIN " . $dbName .".Resource R
+								NATURAL JOIN " . $dbName .".Status S
+								WHERE ROL.organizationID = '" . $this->organizationID . "' "
+								. $whereOptions . "
+								ORDER BY 4,2;";
+
+		$result = $this->db->processQuery($query, 'assoc');
+		//this is because processQuery has a bad habit of mixed return values
+		//TODO: change this, maybe, someday
+		if ($result['resourceID']) {
+			$result = array($result);
+		}
+
+		return $result;
+
+	}
+
+
+	//returns array of statuses from resources database
+	public function getResourceStatuses(){
+		$statusArray = array();
+
+		//make sure we have the resourcesModule
+		$config = new Configuration;
+		if ($config->settings->resourcesModule != 'Y') {
+			return $statusArray;
+		}
+
+		$dbName = $config->settings->resourcesDatabaseName;
+		if ($dbName == '') {
+			return $statusArray;
+		}
+		$query = "SELECT S.statusID, S.shortName FROM " . $dbName . ".Status S;";
+
+		$result = $this->db->processQuery($query, 'assoc');
+		//this is because processQuery has a bad habit of mixed return values
+		//TODO: change this, maybe, someday
+		if ($result['statusID']) {
+			$result = array($result);
+		}
+		foreach ($result as $row) {
+			$ids_by_name[$row["shortName"]] = $row["statusID"];
+		}
+
+		return $ids_by_name;
 	}
 
 

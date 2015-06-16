@@ -26,7 +26,7 @@
 			 async:	     true,
 			 data:       "action=getExistingOrganizationName&name=" + $("#organizationName").val(),
 			 success:    function(exists) {
-				if ((exists == "0") || (exists == $("#editOrganizationID").val())){
+				if ((exists == 0) || (exists == $("#editOrganizationID").val())){
 					$("#span_errors").html("");
 					$("#submitOrganizationChanges").removeAttr("disabled");
 				}else{
@@ -56,7 +56,6 @@
 	 $("#parentOrganization").autocomplete('ajax_processing.php?action=getOrganizationList', {
 		minChars: 2,
 		max: 20,
-		autoFill: true,
 		mustMatch: false,
 		width: 220,
 		delay: 10,
@@ -107,10 +106,10 @@
  
  function validateForm (){
  	myReturn=0;
- 	if (!validateRequired('organizationName','<br />Name must be entered to continue.')) myReturn="1";
+ 	if (!validateRequired('organizationName','<br />Name must be entered to continue.')) myReturn=1;
  	
  
- 	if (myReturn == "1"){
+ 	if (myReturn == 1){
 		return false; 	
  	}else{
  		return true;
@@ -141,7 +140,7 @@ function submitOrganization(){
 					return false;	
 				//if this was an edit for an existing organization
 				}else{
-					if (html){
+					if (html.length > 1){
 						$("#span_errors").html(html);
 						$("#submitOrganizationChanges").removeAttr("disabled");
 					}else{

@@ -40,10 +40,10 @@
  
  function validateForm (){
  	myReturn=0;
- 	if (!validateRequired('aliasName','<br />Name must be entered to continue.')) myReturn="1";
+ 	if (!validateRequired('aliasName','<br />Name must be entered to continue.')) myReturn=1;
  	
  
- 	if (myReturn == "1"){
+ 	if (myReturn == 1){
 		return false; 	
  	}else{
  		return true;
@@ -61,7 +61,7 @@ function submitAliases(){
 				 cache:      false,
 				 data:       { aliasID: $("#editAliasID").val(), name: $("#aliasName").val(), aliasTypeID: $("#aliasTypeID").val(), organizationID: $("#editOrganizationID").val() },
 				 success:    function(html) {
-					if (html){
+					if (html.length > 1){
 						$("#span_errors").html(html);
 						$("#submitAliasForm").removeAttr("disabled");
 					}else{

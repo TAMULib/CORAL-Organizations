@@ -37,7 +37,6 @@ switch ($_GET['action']) {
 			//set up new organization
 			$organization = new Organization();
 
-			$organization->organizationID 		= '';
 			$organization->createLoginID 		= $loginID;
 			$organization->createDate			= date( 'Y-m-d H:i:s' );
 
@@ -107,7 +106,6 @@ switch ($_GET['action']) {
 		}else{
 			//set up new alias
 			$alias = new Alias();
-			$alias->aliasID = '';
 		}
 
 		$alias->aliasTypeID = $_POST['aliasTypeID'];
@@ -133,10 +131,9 @@ switch ($_GET['action']) {
 		}else{
 			//set up new contact
 			$contact = new Contact();
-			$contact->contactID	= '';
 		}
 
-		$contact->lastUpdateDate		= date( 'Y-m-d H:i:s' );
+		$contact->lastUpdateDate		= date( 'Y-m-d' );
 		$contact->organizationID 		= $_POST['organizationID'];
 		$contact->name 					= $_POST['name'];
 		$contact->title 				= $_POST['title'];
@@ -148,7 +145,7 @@ switch ($_GET['action']) {
 		$contact->noteText				= $_POST['noteText'];
 
 		if (((!$contact->archiveDate) || ($contact->archiveDate == '0000-00-00')) && ($_POST['archiveInd'] == "1")){
-			$contact->archiveDate = date( 'Y-m-d H:i:s' );
+			$contact->archiveDate = date( 'Y-m-d' );
 		}else if ($_POST['archiveInd'] == "0"){
 			$contact->archiveDate = '';
 		}
@@ -192,7 +189,6 @@ switch ($_GET['action']) {
 		}else{
 			//set up new external login
 			$externalLogin = new ExternalLogin();
-			$externalLogin->externalLoginID =  '';
 		}
 
 		$externalLogin->updateDate				= date( 'Y-m-d H:i:s' );
@@ -222,16 +218,22 @@ switch ($_GET['action']) {
 		}else{
 			//set up new external login
 			$issueLog = new IssueLog();
-			$issueLog->issueLogID = '';
 		}
 
-		if ($_POST['issueDate']){
-			$issueLog->issueDate = date("Y-m-d", strtotime($_POST['issueDate']));
+		if ($_POST['issueStartDate']){
+			$issueLog->issueStartDate = date("Y-m-d", strtotime($_POST['issueStartDate']));
 		}else{
-			$issueLog->issueDate = '';
+			$issueLog->issueStartDate = '';
+		}
+
+    if ($_POST['issueEndDate']){
+			$issueLog->issueEndDate = date("Y-m-d", strtotime($_POST['issueEndDate']));
+		}else{
+			$issueLog->issueEndDate = '';
 		}
 
 		$issueLog->organizationID 		= $_POST['organizationID'];
+		$issueLog->issueLogTypeID 		= $_POST['issueLogTypeID'];
 		$issueLog->updateLoginID 		= $loginID;
 		$issueLog->updateDate			= date( 'Y-m-d H:i:s' );
 		$issueLog->noteText				= $_POST['noteText'];
@@ -378,7 +380,7 @@ switch ($_GET['action']) {
 
 		foreach ($organization->allAsArray() as $orgArray) {
 			if ((strtoupper($orgArray['name']) == strtoupper($name)) && ($orgArray['organizationID'] != $organizationID)) {
-				$exists++;
+				$exists = $orgArray['organizationID']; break;
 			}
 		}
 
