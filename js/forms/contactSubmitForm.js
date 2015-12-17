@@ -87,10 +87,10 @@ function submitContact(){
 			 cache:      false,
 			 data:       { contactID: $("#editContactID").val(), organizationID: $("#editOrganizationID").val(), name: $("#contactName").val(), title: $("#contactTitle").val(), addressText: $("#addressText").val(), phoneNumber: $("#phoneNumber").val(), altPhoneNumber: $("#altPhoneNumber").val(), faxNumber: $("#faxNumber").val(), emailAddress: $("#emailAddress").val(), archiveInd: getCheckboxValue('invalidInd'), noteText: $("#noteText").val(),  contactRoles: contactRolesList },
 			 success:    function(html) {
-				if (!parseInt(html)){
+				if (html.length > 1){
 					$("#span_errors").html(html);
 					$("#submitContactForm").removeAttr("disabled");
-				} else {
+				}else{
 					window.parent.tb_remove();
 					window.parent.updateContacts();
 					window.parent.updateArchivedContacts();
@@ -107,16 +107,27 @@ function submitContact(){
 
  
  function validateForm (){
+ 	myReturn=0;
 	
 	contactRolesList ='';
 	$(".check_roles:checked").each(function(id) {
 	      contactRolesList += $(this).val() + ",";
 	}); 
-	if (contactRolesList == ''){
+	
+ 	if (contactRolesList == ''){
  	    $("#span_error_contactRole").html('Please choose at least one role.');
- 	    return false;
+ 	    myReturn=1;
  	} else {
  	    $("#span_error_contactRole").html('');
-        return true;
 	}
+
+	if ($("#contactType").val() == "named"){
+ 		if (!validateRequired('contactName','<br />Name must be entered to continue.')) myReturn=1;	
+ 	}
+ 
+ 	if (myReturn == 1){
+		return false; 	
+ 	}else{
+ 		return true;
+ 	}
 }
