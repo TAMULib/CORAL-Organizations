@@ -612,6 +612,10 @@ form#newIssueForm #resourceIDs {
 	min-width: 10%;
 }
 
+#newDowntimeForm .input-small {
+	max-width: 20%;
+}
+
 #newIssueForm #contactIDs,
 #newIssueForm #bodyText,
 #newIssueForm #resourceIDs {
